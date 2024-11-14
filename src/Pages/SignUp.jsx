@@ -1,40 +1,36 @@
 // Signup.js
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// import { signupAPI } from "../utils/constants";
+import axios from "axios";
 import Cookies from "js-cookie";
 import { User, Mail, Lock, LogIn } from "lucide-react";
+import { registerUser } from "../Constants/Api";
 
-const signupAPI = "";
 const Signup = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    if (isLoggedIn) navigate("/home");
+    if (isLoggedIn) navigate("/login");
   }, [isLoggedIn, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const fullName = e.target.fullName.value;
+    const userName = e.target.userName.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
-    const data = { fullName, email, password };
+    const data = { userName, email, password };
 
     try {
-      const response = await fetch(signupAPI, {
-        method: "POST",
+      const response = await axios.post(registerUser, data, {
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
       });
-      if (!response.ok) throw new Error("Network response was not ok");
 
-      const responseData = await response.json();
-      Cookies.set("accessToken", responseData.data.accessToken);
-      Cookies.set("refreshToken", responseData.data.refreshToken);
+      Cookies.set("accessToken", response.data.data.accessToken);
+      Cookies.set("refreshToken", response.data.data.refreshToken);
       setIsLoggedIn(true);
     } catch (error) {
-      console.error("There was a problem with your fetch operation:", error);
+      console.error("There was a problem with your signup request:", error);
     }
   };
 
@@ -49,7 +45,7 @@ const Signup = () => {
             <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
             <input
               type="text"
-              name="fullName"
+              name="userName"
               placeholder="Full Name"
               className="w-full pl-10 pr-4 py-3 bg-gray-100 border border-gray-200 rounded-2xl focus:bg-white"
               required
@@ -58,7 +54,7 @@ const Signup = () => {
           <div className="relative">
             <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
             <input
-              type="email"
+              type="text"
               name="email"
               placeholder="Email"
               className="w-full pl-10 pr-4 py-3 bg-gray-100 border border-gray-200 rounded-2xl focus:bg-white"
@@ -76,9 +72,9 @@ const Signup = () => {
             />
           </div>
 
-          <button className="w-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white py-3 px-4 rounded-2xl">
-            <LogIn className="h-5 w-5 mr-2" />
-            Sign Up
+          <button className="w-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white py-3 px-4 rounded-2xl flex items-center justify-center space-x-2">
+            <LogIn className="h-5 w-5" />
+            <span>Sign Up</span>
           </button>
         </form>
 

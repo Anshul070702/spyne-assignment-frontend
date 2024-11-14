@@ -1,20 +1,21 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import { useState, useEffect } from "react";
+// import { useState, useEffect } from "react";
 
-const Navbar = () => {
+const Navbar = ({ login, setLogin }) => {
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  useEffect(() => {
-    const accessToken = Cookies.get("accessToken");
-    setIsLoggedIn(!!accessToken);
-  }, []);
+  // useEffect(() => {
+  //   const accessToken = Cookies.get("accessToken");
+  //   setIsLoggedIn(!!accessToken);
+  // }, []);
 
   const handleLogout = () => {
     Cookies.remove("accessToken");
     Cookies.remove("refreshToken");
-    setIsLoggedIn(false);
+    // setIsLoggedIn(false);
+    setLogin(false);
     navigate("/login");
   };
 
@@ -37,31 +38,37 @@ const Navbar = () => {
 
         {/* Other Links on the Right */}
         <div className="flex items-center space-x-4">
-          <NavLink
-            to="/cars"
-            className={({ isActive }) =>
-              isActive
-                ? "bg-cyan-400 text-gray-800 px-3 py-2 text-lg font-bold rounded-md"
-                : "text-white text-lg font-bold hover:bg-cyan-500 hover:text-gray-800 px-3 py-2 rounded-md"
-            }
-          >
-            Cars
-          </NavLink>
-          <NavLink
-            to="/add-cars"
-            className={({ isActive }) =>
-              isActive
-                ? "bg-cyan-400 text-gray-800 px-3 py-2 text-lg font-bold rounded-md"
-                : "text-white text-lg font-bold hover:bg-cyan-500 hover:text-gray-800 px-3 py-2 rounded-md"
-            }
-          >
-            Add Cars
-          </NavLink>
-          {!isLoggedIn ? (
+          {login && (
+            <>
+              <NavLink
+                to="/cars"
+                className={({ isActive }) =>
+                  isActive
+                    ? "bg-cyan-400 text-gray-800 px-3 py-2 text-lg font-bold rounded-md"
+                    : "text-white text-lg font-bold hover:bg-cyan-500 hover:text-gray-800 px-3 py-2 rounded-md"
+                }
+              >
+                Cars
+              </NavLink>
+
+              <NavLink
+                to="/add-cars"
+                className={({ isActive }) =>
+                  isActive
+                    ? "bg-cyan-400 text-gray-800 px-3 py-2 text-lg font-bold rounded-md"
+                    : "text-white text-lg font-bold hover:bg-cyan-500 hover:text-gray-800 px-3 py-2 rounded-md"
+                }
+              >
+                Add Cars
+              </NavLink>
+            </>
+          )}
+
+          {!login ? (
             <>
               <NavLink
                 to="/signup"
-                className="text-white font-bold text-lg hover:bg-indigo-500 px-3 py-2 rounded-md "
+                className="text-white font-bold text-lg hover:bg-indigo-500 px-3 py-2 rounded-md"
               >
                 Sign Up
               </NavLink>

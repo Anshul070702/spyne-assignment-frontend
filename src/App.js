@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -12,15 +12,16 @@ import Home from "./Pages/Home.jsx";
 import AddCars from "./Pages/AddCars.jsx";
 import Cars from "./Pages/Cars.jsx";
 const App = () => {
+  const [login, setLogin] = useState(false);
   return (
     <Router>
-      <Navbar />
+      <Navbar login={login} setLogin={setLogin} />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login setLogin={setLogin} />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/add-cars" element={<AddCars />} />
-        <Route path="/cars" element={<Cars />} />
+        {login && <Route path="/add-cars" element={<AddCars />} />}
+        {login && <Route path="/cars" element={<Cars />} />}
         {/* Redirect all unmatched routes to Home */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
