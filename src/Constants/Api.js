@@ -1,6 +1,6 @@
 //  Host
 // export const host = "http://localhost:8000/api/v1";
-export const host = "https://spyne-assignment-backend-t3k1.onrender.com/api/v1";
+export const host = "https://spyne-assignment-backend-1.onrender.com/api/v1";
 // https://scholar-sync-backend-3.onrender.com/
 
 // User APIs

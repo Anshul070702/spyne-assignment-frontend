@@ -5,17 +5,17 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { Mail, Lock, LogIn } from "lucide-react";
 import { login } from "../Constants/Api";
-
+import { toast } from "react-toastify";
 const Login = ({ setLogin }) => {
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      navigate("/home");
-    }
-  }, [isLoggedIn, navigate]);
+  // useEffect(() => {
+  //   if (isLoggedIn) {
+  //     navigate("/home");
+  //   }
+  // }, [isLoggedIn, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,12 +27,17 @@ const Login = ({ setLogin }) => {
       const response = await axios.post(login, data, {
         headers: { "Content-Type": "application/json" },
       });
-
       Cookies.set("accessToken", response.data.data.accessToken);
       Cookies.set("refreshToken", response.data.data.refreshToken);
-      setIsLoggedIn(true);
+      toast.success("Login successful!");
+      // setIsLoggedIn(true);
       setLogin(true);
+      navigate("/home");
     } catch (error) {
+      if (error.response.data?.message) {
+        toast.error(error.response.data?.message);
+      } else
+        toast.error("Their was a problem with the server please try again");
       console.error("There was a problem with your login request:", error);
     }
   };

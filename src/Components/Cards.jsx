@@ -7,7 +7,7 @@ const CarCard = ({ car, onView }) => {
       {/* Car Image */}
       <a href={car.carLink}>
         <img
-          src={car.imageUrl}
+          src={car.images[0]}
           alt={`${car.brand} ${car.model}`}
           className="border rounded"
           style={{ maxWidth: "100%", maxHeight: "130px", objectFit: "contain" }}

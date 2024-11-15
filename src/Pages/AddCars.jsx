@@ -1,22 +1,18 @@
 import { useState } from "react";
 import background from "../assets/background.jpg";
-
+import axios from "axios";
+import { createCar } from "../Constants/Api";
+import { toast } from "react-toastify";
 function CarForm() {
   const [formData, setFormData] = useState({
     company: "",
     carName: "",
     description: "",
     price: "",
-    releasedAt: "",
     fuelType: "",
     mileage: "",
-    safetyRating: "",
     warranty: "",
     seater: "",
-    size: "",
-    fuelTank: "",
-    engineSize: "",
-    transmission: "",
     tags: "",
     images: [],
   });
@@ -47,6 +43,13 @@ function CarForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Validate required fields before submitting
+    const { company, carName, description, price, fuelType } = formData;
+    console.log(formData);
+    if (!company || !carName || !description || !price || !fuelType) {
+      alert("Please fill in all required fields.");
+      return;
+    }
     try {
       const form = new FormData();
       for (const key in formData) {
@@ -58,18 +61,33 @@ function CarForm() {
           });
         }
       }
-      const response = await fetch("https://dummyapi.com/cars", {
-        method: "POST",
-        body: form,
+
+      // Use axios to make the POST request
+      const response = await axios.post(createCar, form, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
       });
-      if (response.ok) {
-        alert("Car created successfully!");
-      } else {
-        alert("Failed to create car");
-      }
+
+      toast.success("Car created successfully!");
+      console.log(response);
+      // You can clear form data or redirect the user here if needed
+      setFormData({
+        company: "",
+        carName: "",
+        description: "",
+        price: "",
+        fuelType: "",
+        mileage: "",
+        warranty: "",
+        seater: "",
+        tags: "",
+        images: [],
+      });
     } catch (error) {
       console.error("Error:", error);
-      alert("Something went wrong");
+      toast.error("Something went wrong");
     }
   };
 
@@ -104,7 +122,7 @@ function CarForm() {
 
             <div>
               <label className="block text-lg font-medium text-gray-700">
-                Car Name
+                Car Name/Title
               </label>
               <input
                 type="text"
@@ -121,7 +139,7 @@ function CarForm() {
                 Price
               </label>
               <input
-                type="number"
+                type="text"
                 name="price"
                 value={formData.price}
                 onChange={handleChange}
@@ -130,19 +148,19 @@ function CarForm() {
               />
             </div>
 
-            <div>
+            {/* <div>
               <label className="block text-lg font-medium text-gray-700">
                 Released At
               </label>
               <input
-                type="datetime-local"
+                type="string"
                 name="releasedAt"
                 value={formData.releasedAt}
                 onChange={handleChange}
                 className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 transition"
                 required
               />
-            </div>
+            </div> */}
 
             <div>
               <label className="block text-lg font-medium text-gray-700">
@@ -152,27 +170,14 @@ function CarForm() {
                 type="text"
                 name="fuelType"
                 value={formData.fuelType}
+                placeholder="Petrol or Diesel"
                 onChange={handleChange}
                 className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 transition"
                 required
               />
             </div>
 
-            <div>
-              <label className="block text-lg font-medium text-gray-700">
-                Mileage
-              </label>
-              <input
-                type="text"
-                name="mileage"
-                value={formData.mileage}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 transition"
-                required
-              />
-            </div>
-
-            <div>
+            {/* <div>
               <label className="block text-lg font-medium text-gray-700">
                 Safety Rating
               </label>
@@ -184,7 +189,7 @@ function CarForm() {
                 className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 transition"
                 required
               />
-            </div>
+            </div> */}
 
             <div>
               <label className="block text-lg font-medium text-gray-700">
@@ -202,6 +207,19 @@ function CarForm() {
 
           {/* Right Column */}
           <div className="space-y-4">
+            <div>
+              <label className="block text-lg font-medium text-gray-700">
+                Mileage
+              </label>
+              <input
+                type="text"
+                name="mileage"
+                value={formData.mileage}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 transition"
+                required
+              />
+            </div>
             <div>
               <label className="block text-lg font-medium text-gray-700">
                 Warranty
@@ -232,19 +250,19 @@ function CarForm() {
 
             <div>
               <label className="block text-lg font-medium text-gray-700">
-                Size
+                Description
               </label>
               <input
                 type="text"
-                name="size"
-                value={formData.size}
+                name="description"
+                value={formData.description}
                 onChange={handleChange}
                 className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 transition"
                 required
               />
             </div>
 
-            <div>
+            {/* <div>
               <label className="block text-lg font-medium text-gray-700">
                 Fuel Tank
               </label>
@@ -256,9 +274,9 @@ function CarForm() {
                 className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 transition"
                 required
               />
-            </div>
+            </div> */}
 
-            <div>
+            {/* <div>
               <label className="block text-lg font-medium text-gray-700">
                 Engine Size
               </label>
@@ -270,9 +288,9 @@ function CarForm() {
                 className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 transition"
                 required
               />
-            </div>
+            </div> */}
 
-            <div>
+            {/* <div>
               <label className="block text-lg font-medium text-gray-700">
                 Transmission
               </label>
@@ -284,7 +302,7 @@ function CarForm() {
                 className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 transition"
                 required
               />
-            </div>
+            </div> */}
 
             <div>
               <label className="block text-lg font-medium text-gray-700">
@@ -310,6 +328,7 @@ function CarForm() {
                     />
                     <button
                       onClick={() => handleDeleteImage(index)}
+                      type="button"
                       className="h-6 w-6 absolute top-0 right-0 bg-red-500 text-white text-xs p-1 rounded-full hover:bg-red-600"
                     >
                       X

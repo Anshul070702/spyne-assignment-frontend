@@ -5,6 +5,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { User, Mail, Lock, LogIn } from "lucide-react";
 import { registerUser } from "../Constants/Api";
+import { toast } from "react-toastify";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -25,11 +26,15 @@ const Signup = () => {
       const response = await axios.post(registerUser, data, {
         headers: { "Content-Type": "application/json" },
       });
-
       Cookies.set("accessToken", response.data.data.accessToken);
       Cookies.set("refreshToken", response.data.data.refreshToken);
+      toast.success("Account created successfully!");
       setIsLoggedIn(true);
     } catch (error) {
+      if(error.response.data?.message){
+        toast.error(error.response.data?.message);
+      }
+      else toast.error("Their was a problem with the server please try again");
       console.error("There was a problem with your signup request:", error);
     }
   };

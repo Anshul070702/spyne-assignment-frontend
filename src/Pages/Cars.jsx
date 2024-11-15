@@ -1,12 +1,33 @@
-// Components/CarSearch.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CarCard from "../Components/Cards.jsx"; // Adjust path if needed
-import { cars } from "../Constants/tempData.js"; // Importing the car data from temp.js
+import axios from "axios"; // Import axios
+import { getAllCar } from "../Constants/Api.js";
 
 const CarSearch = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [selectedCar, setSelectedCar] = useState(null); // New state for selected car
+  const [cars, setCars] = useState([]); // State for storing fetched car data
+  const [loading, setLoading] = useState(true); // Loading state to handle API call
+
+  // Fetch cars from the API when the component mounts
+  useEffect(() => {
+    const fetchCars = async () => {
+      try {
+        const response = await axios.get(getAllCar, {
+          withCredentials: true,
+        }); // Make the API call to fetch car data
+        console.log(response.data.data.cars);
+        setCars(response.data.data.cars); // Assuming the response contains the car data in `data`
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching car data:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchCars();
+  }, []);
 
   // Filter brands list dynamically from car data
   const brands = [...new Set(cars.map((car) => car.brand))];
@@ -25,7 +46,7 @@ const CarSearch = () => {
 
   // Filter cars based on search and brand selection
   const filteredCars = cars.filter((car) => {
-    const matchesSearch = car.model
+    const matchesSearch = car.carName
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
     const matchesBrand =
@@ -52,7 +73,8 @@ const CarSearch = () => {
           <h4 className="text-lg font-semibold mb-3">🔎 Search Your Car</h4>
           <input
             type="text"
-            placeholder="Search by model..."
+            placeholder="Search by carName
+..."
             value={searchTerm}
             onChange={handleSearch}
             className="w-full p-2 border rounded-md"
@@ -89,11 +111,11 @@ const CarSearch = () => {
 
               {/* Car Detail View */}
               <h2 className="text-3xl font-semibold">
-                {selectedCar.brand} {selectedCar.model}
+                {selectedCar.brand} {selectedCar.carName}
               </h2>
               <img
-                src={selectedCar.imageUrl}
-                alt={`${selectedCar.brand} ${selectedCar.model}`}
+                src={selectedCar.images[0]}
+                alt={` ${selectedCar.carName}`}
                 className="w-full max-w-md mx-auto mt-4"
               />
               <p className="mt-4 text-gray-700">
@@ -112,6 +134,10 @@ const CarSearch = () => {
               <p>
                 <strong>Description:</strong> {selectedCar.description}
               </p>
+            </div>
+          ) : loading ? (
+            <div className="col-span-full text-center text-gray-500">
+              Loading cars...
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
